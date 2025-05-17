@@ -1,0 +1,9 @@
+@if (favoritesList$ | async; as favoritesList) {
+  <main class="trial-page-content container">
+    <app-trials-list
+      [trialStudiesList]="favoritesList"
+      (toggleFavoriteButton)="addToFavorites($event)"></app-trials-list>
+  </main>
+} @else {
+  <p>No data available</p>
+}
