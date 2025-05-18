@@ -12,8 +12,8 @@
       </h2>
       <button
         mat-icon-button
-        aria-label="Add to favorites list"
-        (click)="addToFavorites(trial)">
+        aria-label="Toggle favorites list"
+        (click)="toggleFavorites(trial)">
         <mat-icon
           [class]="
             isFavoriteList() || isFavorite(trial)

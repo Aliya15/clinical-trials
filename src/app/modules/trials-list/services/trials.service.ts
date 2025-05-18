@@ -11,6 +11,7 @@ import {
   catchError,
   EMPTY,
   finalize,
+  map,
   Observable,
   scan,
   switchMap,
@@ -55,29 +56,54 @@ export class TrialsService {
       scan(
         (accumulator, trials) => [
           ...trials.studies,
-          ...accumulator.slice(0, 9),
+          ...accumulator.slice(0, 10 - trials.studies.length),
         ],
         [] as StudyTrialItem[]
       ),
-      finalize(() => this.token.next('')),
-      //In the real app I would show a popup to inform a user about an error. Additionally, I would toggle sentry (f.e.)
-      catchError(() => EMPTY)
+      finalize(() => this.token.next(''))
     );
   }
 
   addToFavorites(trial: StudyTrialItem): void {
-    const updatedTrialList = [...this.favoritesList.value, trial];
-    this.favoritesList.next(updatedTrialList);
+    const checkIsExisting = this.favoritesList.value.find(
+      favorite =>
+        TrialsService.getTrialId(favorite) === TrialsService.getTrialId(trial)
+    );
+
+    if (!checkIsExisting) {
+      const updatedTrialList = [...this.favoritesList.value, trial];
+      this.favoritesList.next(updatedTrialList);
+    }
   }
 
   getFavorites(): Observable<StudyTrialItem[]> {
-    return this.favoritesList;
+    return this.favoritesList.asObservable();
   }
 
-  removeFromFavorites(id: string): void {
-    const updatedList = this.favoritesList.value.filter(
-      fav => fav.protocolSection.identificationModule.nctId !== id
+  getFavoritesMap(): Observable<Record<string, boolean>> {
+    return this.getFavorites().pipe(
+      map(data =>
+        data.reduce(
+          (acc, trial) => ({
+            ...acc,
+            [TrialsService.getTrialId(trial)]: true,
+          }),
+          <Record<string, boolean>>{}
+        )
+      )
     );
+  }
+
+  removeFromFavorites(trial: StudyTrialItem): void {
+    const updatedList = this.favoritesList.value.filter(
+      favorite =>
+        TrialsService.getTrialId(favorite) !== TrialsService.getTrialId(trial)
+    );
+
     this.favoritesList.next([...updatedList]);
+  }
+
+  static getTrialId(trial: StudyTrialItem): string {
+    return trial.protocolSection.identificationModule.nctId;
   }
 }

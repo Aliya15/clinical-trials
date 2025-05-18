@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TrialsService } from '../../services/trials.service';
 import { StudyTrialItem } from '../../../../shared/models/trial.model';
 import { AsyncPipe } from '@angular/common';
@@ -21,15 +16,9 @@ import { RouterLink } from '@angular/router';
 export class FavoriteTrialsComponent {
   private readonly trialService = inject(TrialsService);
 
-  readonly studyTrialList = input.required<StudyTrialItem[]>();
-
   readonly favoritesList$ = this.trialService.getFavorites();
 
-  addToFavorites(trial: StudyTrialItem): void {
-    this.trialService.removeFromFavorites(this.getTrialId(trial));
-  }
-
-  private getTrialId(trial: StudyTrialItem): string {
-    return trial.protocolSection.identificationModule.nctId;
+  removeFromFavorites(trial: StudyTrialItem): void {
+    this.trialService.removeFromFavorites(trial);
   }
 }

@@ -1,12 +1,8 @@
 <main class="trial-page-content container">
   <a class="back-button" routerLink="../" mat-button>Go back</a>
 
-  @if (favoritesList$ | async; as favoritesList) {
-    <app-trials-list
-      [studyTrialList]="favoritesList"
-      [isFavoriteList]="true"
-      (toggleFavoriteButton)="addToFavorites($event)"></app-trials-list>
-  } @else {
-    <p>No data available</p>
-  }
+  <app-trials-list
+    [studyTrialList]="(favoritesList$ | async) ?? []"
+    [isFavoriteList]="true"
+    (removeFavorite)="removeFromFavorites($event)" />
 </main>
