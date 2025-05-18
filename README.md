@@ -1,59 +1,38 @@
 # ClinicalTrials
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.11.
+## High-level overview
 
-## Development server
+I've used modular architecture for the project.
 
-To start a local development server, run:
+### Project Structure
 
-```bash
-ng serve
-```
+#### `modules` directory
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+In this directory is located the one and only page/module for this assignment.
+The `trials-list` module contains components, services and other entities with business logic that is specific to this module.
 
-## Code scaffolding
+`trials-list` modules has its own routes defined inside and is defined as a lazy-loaded route in `app.routes.ts`.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+#### `shared` directory
 
-```bash
-ng generate component component-name
-```
+The shared directory contains only reusable entities, without any business logic.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-```bash
-ng generate --help
-```
+#### `app.component.{ts/html/css}`
 
-## Building
+This component has only router outlet inside without any knowledge of what would be shown inside.
 
-To build the project run:
 
-```bash
-ng build
-```
+### Used Libraries
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- `prettier` and `eslint` for code formatting and linting, to keep the code clean and consistent
+- `@angular/material` - used table, buttons, icons and header components
 
-## Running unit tests
+## How to run the project
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+As a prerequisite, execute `npm install` in the root of the project.
 
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Useful commands
+- Execute `npm run start` to start the dev server
+- Execute `npm run lint` to check the linting of the project
+- Execute `npm run test` to run the unit tests
