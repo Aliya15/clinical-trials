@@ -1,21 +1,32 @@
-@for (
-  trial of trialStudiesList();
-  track trial.protocolSection.identificationModule.nctId
-) {
-  <app-card>
-    <div class="card-item-content">
-      <h2>
-        {{
-          trial.protocolSection.identificationModule.officialTitle ??
-            trial.protocolSection.identificationModule.briefTitle
-        }}
-      </h2>
-      <button
-        (click)="addToFavorites(trial)"
-        mat-icon-button
-        aria-label="Add to favorites list">
-        <mat-icon>favorite</mat-icon>
-      </button>
-    </div>
-  </app-card>
+@if (studyTrialList()) {
+  @for (
+    trial of studyTrialList();
+    track trial.protocolSection.identificationModule.nctId
+  ) {
+    <app-card>
+      <div class="card-item-content">
+        <h2>
+          {{
+            trial.protocolSection.identificationModule.officialTitle ??
+              trial.protocolSection.identificationModule.briefTitle
+          }}
+        </h2>
+        <button
+          (click)="addToFavorites(trial)"
+          mat-icon-button
+          aria-label="Add to favorites list">
+          <mat-icon
+            [class]="
+              isFavoriteList() || isFavorite(trial)
+                ? 'favorite-icon'
+                : 'regular-icon'
+            "
+            >favorite</mat-icon
+          >
+        </button>
+      </div>
+    </app-card>
+  }
+} @else {
+  <p>No data available</p>
 }

@@ -1,7 +1,9 @@
 @if (favoritesList$ | async; as favoritesList) {
   <main class="trial-page-content container">
+    <a class="back-button" routerLink="../" mat-button>Go back</a>
     <app-trials-list
-      [trialStudiesList]="favoritesList"
+      [studyTrialList]="favoritesList"
+      [isFavoriteList]="true"
       (toggleFavoriteButton)="addToFavorites($event)"></app-trials-list>
   </main>
 } @else {

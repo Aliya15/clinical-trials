@@ -7,7 +7,7 @@ import {
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { TrialStudyItem } from '../../../../shared/models/trial.model';
+import { StudyTrialItem } from '../../../../shared/models/trial.model';
 
 @Component({
   selector: 'app-trials-list',
@@ -17,10 +17,18 @@ import { TrialStudyItem } from '../../../../shared/models/trial.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrialsListComponent {
-  trialStudiesList = input.required<TrialStudyItem[]>();
-  toggleFavoriteButton = output<TrialStudyItem>();
+  studyTrialList = input.required<StudyTrialItem[]>();
+  toggleFavoriteButton = output<StudyTrialItem>();
+  favoriteList = input<string[]>([]);
+  isFavoriteList = input<boolean>(false);
 
-  addToFavorites(trial: TrialStudyItem) {
+  isFavorite(trial: StudyTrialItem): boolean {
+    return this.favoriteList().includes(
+      trial.protocolSection.identificationModule.nctId
+    );
+  }
+
+  addToFavorites(trial: StudyTrialItem) {
     this.toggleFavoriteButton.emit(trial);
   }
 }

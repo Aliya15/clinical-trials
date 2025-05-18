@@ -1,11 +1,12 @@
-@if (trialStudiesList$ | async; as trialStudiesList) {
+@if (studyTrialList$ | async; as studyTrialList) {
   <main class="trial-page-content container">
     <div class="trial-page-heading">
       <h1>All Study Trials</h1>
       <a routerLink="../favorites" mat-button>Go to Favorites list</a>
     </div>
     <app-trials-list
-      [trialStudiesList]="trialStudiesList"
+      [studyTrialList]="studyTrialList"
+      [favoriteList]="favoriteList()"
       (toggleFavoriteButton)="addToFavorites($event)"></app-trials-list>
   </main>
 } @else {

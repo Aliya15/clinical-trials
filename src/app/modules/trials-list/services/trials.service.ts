@@ -2,15 +2,16 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import {
-  TrialStudiesParams,
-  TrialStudyData,
-  TrialStudyItem,
+  StudyTrialData,
+  StudyTrialItem,
+  StudyTrialParams,
 } from '../../../shared/models/trial.model';
 import {
   BehaviorSubject,
+  catchError,
+  EMPTY,
   finalize,
   Observable,
-  of,
   scan,
   switchMap,
   tap,
@@ -24,47 +25,56 @@ export class TrialsService {
   private readonly studiesUrl = 'studies';
   private readonly http = inject(HttpClient);
 
-  private favoritesList = new BehaviorSubject<TrialStudyItem[]>([]);
+  private favoritesList = new BehaviorSubject<StudyTrialItem[]>([]);
 
   readonly token = new BehaviorSubject<string>('');
 
-  getTrialStudies(params: TrialStudiesParams): Observable<TrialStudyData> {
-    return this.http.get<TrialStudyData>(
-      `${environment.baseUrl}/${this.apiUrl}/${this.studiesUrl}`,
-      { params: { ...params } }
+  getStudyTrial(params: StudyTrialParams): Observable<StudyTrialData> {
+    return (
+      this.http
+        .get<StudyTrialData>(
+          `${environment.baseUrl}/${this.apiUrl}/${this.studiesUrl}`,
+          { params: { ...params } }
+        )
+        //In the real app I would show a popup to inform a user about an error. Additionally, I would toggle sentry (f.e.)
+        .pipe(catchError(() => EMPTY))
     );
   }
 
-  startTrialStudiesPolling(
+  startStudyTrialPolling(
     intervalValue: number = 5000
-  ): Observable<TrialStudyItem[]> {
+  ): Observable<StudyTrialItem[]> {
     return timer(0, intervalValue).pipe(
       withLatestFrom(this.token),
       switchMap(([, pageToken]) => {
-        return this.getTrialStudies({
+        return this.getStudyTrial({
           pageSize: pageToken ? '1' : '10',
           ...(pageToken ? { pageToken } : null),
         }).pipe(tap(trials => this.token.next(trials.nextPageToken)));
       }),
       scan(
         (accumulator, trials) => [...accumulator.slice(-9), ...trials.studies],
-        [] as TrialStudyItem[]
+        [] as StudyTrialItem[]
       ),
-      finalize(() => this.token.next(''))
+      finalize(() => this.token.next('')),
+      //In the real app I would show a popup to inform a user about an error. Additionally, I would toggle sentry (f.e.)
+      catchError(() => EMPTY)
     );
   }
 
-  addToFavorites(trial: TrialStudyItem): void {
+  addToFavorites(trial: StudyTrialItem): void {
     const updatedTrialList = [...this.favoritesList.value, trial];
     this.favoritesList.next(updatedTrialList);
-    console.log(this.favoritesList.value);
   }
 
-  getFavorites(): Observable<TrialStudyItem[]> {
-    return of(this.favoritesList.value);
+  getFavorites(): Observable<StudyTrialItem[]> {
+    return this.favoritesList;
   }
 
   removeFromFavorites(id: string): void {
-    console.log('removeFromFavorites', id);
+    const updatedList = this.favoritesList.value.filter(
+      fav => fav.protocolSection.identificationModule.nctId !== id
+    );
+    this.favoritesList.next([...updatedList]);
   }
 }

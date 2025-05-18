@@ -1,10 +1,10 @@
-export interface TrialStudyData {
+export interface StudyTrialData {
   totalCount?: number;
   nextPageToken: string;
-  studies: TrialStudyItem[];
+  studies: StudyTrialItem[];
 }
 
-export interface TrialStudyItem {
+export interface StudyTrialItem {
   protocolSection: ProtocolSectionData;
 }
 
@@ -30,7 +30,7 @@ export interface ProtocolSectionData {
   identificationModule: IdentificationModuleData;
 }
 
-export interface TrialStudiesParams {
+export interface StudyTrialParams {
   pageSize: string;
   pageToken?: string;
 }
