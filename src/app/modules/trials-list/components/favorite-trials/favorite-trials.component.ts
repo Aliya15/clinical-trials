@@ -20,14 +20,16 @@ import { RouterLink } from '@angular/router';
 })
 export class FavoriteTrialsComponent {
   private readonly trialService = inject(TrialsService);
-  favoritesList$ = this.trialService.getFavorites();
+
   readonly studyTrialList = input.required<StudyTrialItem[]>();
 
-  getTrialId(trial: StudyTrialItem): string {
-    return trial.protocolSection.identificationModule.nctId;
-  }
+  readonly favoritesList$ = this.trialService.getFavorites();
 
   addToFavorites(trial: StudyTrialItem): void {
     this.trialService.removeFromFavorites(this.getTrialId(trial));
+  }
+
+  private getTrialId(trial: StudyTrialItem): string {
+    return trial.protocolSection.identificationModule.nctId;
   }
 }

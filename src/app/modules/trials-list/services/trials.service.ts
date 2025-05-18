@@ -25,9 +25,9 @@ export class TrialsService {
   private readonly studiesUrl = 'studies';
   private readonly http = inject(HttpClient);
 
-  private favoritesList = new BehaviorSubject<StudyTrialItem[]>([]);
+  private readonly favoritesList = new BehaviorSubject<StudyTrialItem[]>([]);
 
-  readonly token = new BehaviorSubject<string>('');
+  private readonly token = new BehaviorSubject<string>('');
 
   getStudyTrial(params: StudyTrialParams): Observable<StudyTrialData> {
     return (
@@ -53,7 +53,10 @@ export class TrialsService {
         }).pipe(tap(trials => this.token.next(trials.nextPageToken)));
       }),
       scan(
-        (accumulator, trials) => [...accumulator.slice(-9), ...trials.studies],
+        (accumulator, trials) => [
+          ...trials.studies,
+          ...accumulator.slice(0, 9),
+        ],
         [] as StudyTrialItem[]
       ),
       finalize(() => this.token.next('')),

@@ -17,10 +17,11 @@ import { StudyTrialItem } from '../../../../shared/models/trial.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrialsListComponent {
-  studyTrialList = input.required<StudyTrialItem[]>();
-  toggleFavoriteButton = output<StudyTrialItem>();
-  favoriteList = input<string[]>([]);
-  isFavoriteList = input<boolean>(false);
+  readonly studyTrialList = input.required<StudyTrialItem[]>();
+  readonly favoriteList = input<string[]>([]);
+  readonly isFavoriteList = input<boolean>(false);
+
+  readonly toggleFavoriteButton = output<StudyTrialItem>();
 
   isFavorite(trial: StudyTrialItem): boolean {
     return this.favoriteList().includes(
@@ -28,7 +29,7 @@ export class TrialsListComponent {
     );
   }
 
-  addToFavorites(trial: StudyTrialItem) {
+  addToFavorites(trial: StudyTrialItem): void {
     this.toggleFavoriteButton.emit(trial);
   }
 }

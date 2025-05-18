@@ -3,17 +3,15 @@ import {
   Component,
   inject,
   input,
-  OnInit,
-  signal,
 } from '@angular/core';
 import { StudyTrialItem } from '../../../../shared/models/trial.model';
 import { MatIconModule } from '@angular/material/icon';
 import { TrialsService } from '../../services/trials.service';
-import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { TrialsListComponent } from '../trials-list/trials-list.component';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-all-trials-list',
@@ -28,27 +26,21 @@ import { RouterLink } from '@angular/router';
   styleUrl: './all-trial-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AllTrialListComponent implements OnInit {
+export class AllTrialListComponent {
   private readonly trialService = inject(TrialsService);
-  studyTrialList$: Observable<StudyTrialItem[]> =
-    this.trialService.startStudyTrialPolling();
   readonly studyTrialList = input.required<StudyTrialItem[]>();
-  favoriteList = signal<string[]>([]);
 
-  ngOnInit(): void {
-    this.trialService.getFavorites().subscribe((data: StudyTrialItem[]) => {
-      const ids = data.map(
-        trial => trial.protocolSection.identificationModule.nctId
-      );
-      this.favoriteList.set(ids);
-    });
-  }
+  readonly studyTrialList$ = this.trialService.startStudyTrialPolling();
+
+  readonly favoriteList$ = this.trialService
+    .getFavorites()
+    .pipe(
+      map(data =>
+        data.map(trial => trial.protocolSection.identificationModule.nctId)
+      )
+    );
 
   addToFavorites(trial: StudyTrialItem): void {
     this.trialService.addToFavorites(trial);
-    this.favoriteList.set([
-      ...this.favoriteList(),
-      trial.protocolSection.identificationModule.nctId,
-    ]);
   }
 }
